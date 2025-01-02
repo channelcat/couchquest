@@ -20,7 +20,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
   },
-  base: "https://drinkarr.hill.tools",
+  base: "https://drinkarr.hill.tools/static",
   css: { postcss },
   plugins: [svelte(),],
 })
