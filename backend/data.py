@@ -41,7 +41,9 @@ class ActionRequest(BaseModel):
 class GenerateRequest(BaseModel):
     id: str | int
     service: str
+    imdb_id: int
     desired_actions: list[ActionRequest]
+    parent_imdb_id: int | None = None
 
 
 class GeneratedGame(BaseModel):

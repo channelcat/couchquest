@@ -1,6 +1,26 @@
+import asyncio
 from data import GenerateRequest, GeneratedGame, GeneratedGames, SearchResult
-from service import api, UserError
+import logging
+import myapifilms
 import opensubtitles
+from service import api, UserError
+
+
+def format_srt(srt: bytes) -> str:
+    srt_txt = srt.decode("utf-8")
+    blocks = srt_txt.split("\n\n")
+
+    output = []
+    nl = "\n"
+    for block in blocks:
+        lines = block.split(nl)
+        start_time, end_time = lines[1].split(" --> ")
+        output.append(f"{start_time[:-4]}: {nl.join(lines[2:])}")
+    return "\n\n".join(output)
+
+
+async def none():
+    return None
 
 
 @api.get("/search")
@@ -15,12 +35,15 @@ async def media_search(query: str) -> list[SearchResult]:
 async def generate(request: GenerateRequest) -> GeneratedGames:
     # TODO: support multiple languages
 
-    # Fetch subtitles
-    subtitles = await opensubtitles.download_best_subtitles(request.id, language="en")
-    with open("/tmp/subtitles.srt", "wb") as f:
-        f.write(subtitles)
-
-    # Fetch synopsis
+    subtitles, summary, parent_summary = await asyncio.gather(
+        opensubtitles.download_best_subtitles(request.id, language="en"),
+        myapifilms.get_imdb_summary(request.imdb_id),
+        (
+            myapifilms.get_imdb_summary(request.parent_imdb_id)
+            if request.parent_imdb_id
+            else none()
+        ),
+    )
 
     # Generate games
     # Return results

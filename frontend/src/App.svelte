@@ -48,6 +48,8 @@
     const [results] = await apiCall(generateRequest, {
       requestBody: {
         id: selected.episode?.id || selected.result.id,
+        imdb_id: selected.episode?.imdb_id || selected.result.imdb_id,
+        parent_imdb_id: selected.episode ? selected.result.imdb_id : null,
         service: selected.result.service,
         desired_actions: desiredActions,
       },
