@@ -2,7 +2,7 @@ from httpx import AsyncClient
 import json
 from os import environ
 
-TIMEOUT_SECONDS = 15
+TIMEOUT_SECONDS = 45
 API_KEY = environ.get("ANTHROPIC_API_KEY")
 
 
