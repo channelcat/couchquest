@@ -82,10 +82,6 @@ async def search(query: str, filter_language: str = None) -> list[dict]:
         )
     ]
 
-    import json
-
-    logging.info(json.dumps(results, indent=2))
-
     return [
         SearchResult(
             title=result["title"],
@@ -132,7 +128,6 @@ async def download_subtitles(file_id: int) -> bytes:
     logging.info(
         f"{response['requests']} sent, {response['remaining']} remaining until {response['reset_time_utc']}"
     )
-    logging.info(f"Download URL: {response['link']}")
 
     file_url = response["link"]
 

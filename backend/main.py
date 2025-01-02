@@ -104,7 +104,7 @@ async def generate(request: GenerateRequest) -> GeneratedGames:
     }}
     """
 
-    logging.info(f"Prompting claude: {prompt}")
+    logging.debug(f"Prompting claude: {prompt}")
     claude_response = await anthropic.claude_request_json(
         messages=[
             *(
