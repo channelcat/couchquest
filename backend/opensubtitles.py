@@ -82,10 +82,20 @@ async def search(query: str, filter_language: str = None) -> list[dict]:
         )
     ]
 
+    import json
+
+    logging.info(json.dumps(results, indent=2))
+
     return [
         SearchResult(
             title=result["title"],
-            release_year=result["year"],
+            release_year=(
+                int(result["year"])
+                if type(result["year"]) is int
+                or type(result["year"]) is str
+                and result["year"].isnumeric()
+                else None
+            ),
             service="opensubtitles",
             id=result["feature_id"],
             imdb_id=result["imdb_id"],

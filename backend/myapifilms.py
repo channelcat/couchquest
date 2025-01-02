@@ -33,7 +33,7 @@ async def get_imdb_summary(imdb_id: int) -> str:
         "GET",
         f"/imdb/idIMDB",
         params={
-            "idIMDB": f"tt{imdb_id}",
+            "idIMDB": f"tt{str(imdb_id).zfill(7)}",
             "aka": 0,
             "business": 0,
             "seasons": 0,

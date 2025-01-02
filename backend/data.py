@@ -17,7 +17,7 @@ class Season(BaseModel):
 
 class SearchResult(BaseModel):
     title: str
-    release_year: int
+    release_year: int | None
     service: str
     id: str | int
     imdb_id: int
