@@ -77,4 +77,8 @@
       </div>
     </div>
   {/each}
+{:else}
+  <div class="flex justify-center items-center mt-4">
+    <div class="text-gray-600 text-sm">No results found</div>
+  </div>
 {/if}
