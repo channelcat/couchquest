@@ -1,0 +1,24 @@
+services:
+  drinkarr:
+    image: ghcr.io/channelcat/drinkarr:latest
+    environment:
+      - OPENSUBTITLES_API_KEY
+      - OPENSUBTITLES_LOGIN
+      - OPENSUBTITLES_PASSWORD
+      - ANTHROPIC_API_KEY
+    ports:
+      - 80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.drinkarr.rule=Host(`drinkarr.hill.tools`)
+      - traefik.http.routers.drinkarr.entrypoints=web,websecure
+      - traefik.http.routers.drinkarr.tls.certresolver=letsencrypt
+    networks:
+      - webserver_web
+  cache:
+    image: redis:alpine
+    ports:
+      - 6379
+networks:
+  webserver_web:
+    external: true

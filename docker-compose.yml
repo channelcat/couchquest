@@ -1,0 +1,35 @@
+services:
+  backend:
+    env_file: .env
+    build: backend
+    volumes:
+      - ./backend:/api
+      - ./frontend:/frontend
+    ports:
+      - 4000:4000
+    command: uvicorn main:api.service --host 0.0.0.0 --port 4000 --reload
+  frontend:
+    build:
+      context: ./frontend
+      target: base
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/dist
+    command: npm run dev
+  cache:
+    image: redis:alpine
+    ports:
+      - 6379
+  setup:
+    build: .
+    volumes:
+      - ./backend:/backend
+      - ./frontend:/app
+    profiles:
+      - donotstart
+    command: bash -c "cd /frontend && npm i"
+  # env_file:
+  #   - .env
