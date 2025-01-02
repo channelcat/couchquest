@@ -46,6 +46,11 @@ class GenerateRequest(BaseModel):
     parent_imdb_id: int | None = None
 
 
+class GeneratedSuggestion(BaseModel):
+    suggestion: str
+    estimated_amount: int | None = None
+
+
 class GeneratedGame(BaseModel):
     name: str
     instructions: str
@@ -60,5 +65,5 @@ class GeneratedAction(BaseModel):
 
 class GeneratedGames(BaseModel):
     explanation: str
-    suggestions: list[str]
+    suggestions: list[GeneratedSuggestion]
     actions: list[GeneratedAction]

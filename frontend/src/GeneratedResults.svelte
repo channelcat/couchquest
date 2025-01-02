@@ -1,22 +1,55 @@
 <script lang="ts">
   import type { GeneratedGames } from "./backend";
+  import Tab from "./components/Tab.svelte";
+  import TabGroup from "./components/TabGroup.svelte";
 
   export let results: GeneratedGames;
 </script>
 
-<h3 class="my-4 text-lg">Suggestions</h3>
+<h3 class="my-4 text-sm text-gray-600 w-3/4 mx-auto mb-8">
+  {results.explanation}
+</h3>
 
-{#each results.actions as action}
-  <div class="border p-4 my-4 rounded mb-6 shadow-md w-3/4">
-    <div class="flex justify-between items-center mb-4">
-      <div class="w-8"></div>
-      <div class="flex flex-col space-y-2">
-        <h3 class="text-lg">{action.action}</h3>
-        <div class="text-sm">
-          ~{action.games} drinks
+<div class="w-3/4 mx-auto">
+  <TabGroup id="games" history={false} save={false} style="card">
+    {#each results.actions as action}
+      <Tab name={action.action}>
+        <div>
+          <ul class="gap-2 divide-y space-y-3">
+            {#each action.games as game}
+              <li class="pt-3 flex flex-col space-y-2">
+                <h3 class="text-lg">{game.name}</h3>
+                <div class="text-sm">
+                  Estimate: ~{game.estimated_amount}
+                  time{game.estimated_amount > 1 ? "s" : ""}
+                </div>
+                <div class="text-sm text-gray-600">
+                  {game.instructions}
+                </div>
+              </li>
+            {/each}
+          </ul>
         </div>
-      </div>
-      <div class="text-sm w-8">Instruct</div>
-    </div>
-  </div>
-{/each}
+      </Tab>
+    {/each}
+    {#if results.suggestions?.length}
+      <Tab name="Suggestions">
+        <div>
+          <ul class="gap-2 divide-y space-y-3">
+            {#each results.suggestions as suggestion}
+              <li class="pt-3 flex flex-col space-y-2">
+                <div class="text-sm">
+                  Estimate: ~{suggestion.estimated_amount}
+                  time{suggestion.estimated_amount > 1 ? "s" : ""}
+                </div>
+                <div class="text-sm text-gray-600">
+                  {suggestion.suggestion}
+                </div>
+              </li>
+            {/each}
+          </ul>
+        </div>
+      </Tab>
+    {/if}
+  </TabGroup>
+</div>

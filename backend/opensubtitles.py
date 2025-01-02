@@ -76,7 +76,7 @@ async def search(query: str, filter_language: str = None) -> list[dict]:
         result["attributes"]
         for result in response["data"]
         if (
-            result["attributes"]["subtitles_counts"][filter_language] > 0
+            result["attributes"]["subtitles_counts"].get(filter_language, 0) > 0
             if filter_language
             else True
         )
