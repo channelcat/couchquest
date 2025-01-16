@@ -113,6 +113,8 @@ async def get_video_generated_subtitles(video_id):
         html_content = response.text
         # TODO: Add support for other languages
         track_url = extract_caption_track_url(html_content, language="en")
+        if not track_url:
+            raise LookupError("No caption track found")
         response = await client.get(track_url)
         return response.text
 
