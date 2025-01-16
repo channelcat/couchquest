@@ -21,5 +21,5 @@ config: Config = from_yaml(
     "/api/config.yml",
     private_key=env_base64_value("CONFIG_PRIVATE_KEY") if use_encryption else None,
     decrypt=use_encryption,
-    env=environ.get("CONFIG_ENV", "development"),
+    env=environ.get("ENV", "development"),
 )
