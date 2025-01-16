@@ -6,7 +6,14 @@ import re
 from util import run_sync_in_async
 from youtube_transcript_api import YouTubeTranscriptApi
 
-client = Client(api_key=config.youtube_api_key)
+client = None
+
+
+def get_client():
+    global client
+    if not client:
+        client = Client(api_key=config.youtube_api_key)
+    return client
 
 
 def extract_video_id(url):
@@ -46,7 +53,7 @@ def extract_video_id(url):
 
 
 async def search_video(video_id):
-    videos = await run_sync_in_async(client.videos.list, video_id=video_id)
+    videos = await run_sync_in_async(get_client().videos.list, video_id=video_id)
     if type(videos) is dict:
         raise Exception(f"Error fetching video {video_id}: {videos}")
     if not videos.items:
@@ -72,7 +79,7 @@ async def search_video(video_id):
 
 
 async def get_video_details(video_id):
-    videos = await run_sync_in_async(client.videos.list, video_id=video_id)
+    videos = await run_sync_in_async(get_client().videos.list, video_id=video_id)
     if type(videos) is dict:
         raise Exception(f"Error fetching video {video_id}: {videos}")
     if not videos.items:

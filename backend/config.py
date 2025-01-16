@@ -1,5 +1,6 @@
 from configuretron import env_base64_value, from_yaml
 from dataclasses import dataclass
+from os import environ
 
 
 @dataclass
@@ -12,6 +13,11 @@ class Config:
     youtube_api_key: str
 
 
+use_encryption = environ.get("CONFIG_PRIVATE_KEY", "") != ""
+
 config: Config = from_yaml(
-    Config, "/api/config.yml", private_key=env_base64_value("CONFIG_PRIVATE_KEY")
+    Config,
+    "/api/config.yml",
+    private_key=env_base64_value("CONFIG_PRIVATE_KEY") if use_encryption else None,
+    decrypt=use_encryption,
 )
