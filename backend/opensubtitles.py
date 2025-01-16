@@ -158,6 +158,7 @@ async def download_best_subtitles(feature_id: int, language: str) -> bytes:
         },
     )
 
+    # TODO: find out why frieren episode 18 is missing subtitles
     if not response["data"]:
         raise LookupError("No subtitles found")
 

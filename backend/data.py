@@ -7,7 +7,7 @@ class Episode(BaseModel):
     number: int
     title: str
     id: str | int
-    imdb_id: int
+    imdb_id: int | None
 
 
 class Season(BaseModel):
@@ -20,7 +20,7 @@ class SearchResult(BaseModel):
     release_year: int | None
     service: str
     id: str | int
-    imdb_id: int
+    imdb_id: int | str | None
     image_url: str
     url: str
     type: Literal["movie", "series"]
