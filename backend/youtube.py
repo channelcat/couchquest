@@ -1,6 +1,8 @@
 from config import config
 from data import SearchResult
 from datetime import datetime
+import httpx
+import json
 from pyyoutube import Client
 import re
 from util import run_sync_in_async
@@ -93,5 +95,70 @@ async def get_video_details(video_id):
 
 
 async def get_video_subtitles(video_id):
-    transcript = await run_sync_in_async(YouTubeTranscriptApi.get_transcript, video_id)
-    return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
+    try:
+        transcript = await run_sync_in_async(
+            YouTubeTranscriptApi.get_transcript, video_id
+        )
+        return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
+    except Exception as e:
+        try:
+            return await get_video_generated_subtitles(video_id)
+        except Exception as e:
+            raise Exception(f"Failed to get video subtitles")
+
+
+async def get_video_generated_subtitles(video_id):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"https://www.youtube.com/watch?v={video_id}")
+        html_content = response.text
+        # TODO: Add support for other languages
+        track_url = extract_caption_track_url(html_content, language="en")
+        response = await client.get(track_url)
+        return response.text
+
+
+def extract_caption_track_url(html_content, language="en"):
+    """
+    Extract caption tracks data from YouTube HTML content.
+
+    Args:
+        html_content (str): The HTML content from a YouTube page
+
+    Returns:
+        list: List of caption track objects, or empty list if none found
+
+    Example caption track object:
+    {
+        'baseUrl': 'https://www.youtube.com/api/timedtext?...',
+        'name': {'simpleText': 'English (auto-generated)'},
+        'vssId': 'a.en',
+        'languageCode': 'en',
+        'kind': 'asr',
+        'isTranslatable': True
+    }
+    """
+
+    # Find the ytInitialPlayerResponse object in the script
+    pattern = r"var ytInitialPlayerResponse = ({.*?});"
+    match = re.search(pattern, html_content, re.DOTALL)
+
+    if not match:
+        return []
+
+    try:
+        # Parse the JSON content
+        player_response = json.loads(match.group(1))
+
+        # Navigate to captions data
+        captions = player_response.get("captions", {})
+        player_captions = captions.get("playerCaptionsTracklistRenderer", {})
+        caption_tracks = player_captions.get("captionTracks", [])
+
+        for track in caption_tracks:
+            if track.get("languageCode") == language:
+                return track.get("baseUrl")
+
+    except (json.JSONDecodeError, AttributeError, KeyError):
+        pass
+
+    return None
