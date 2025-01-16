@@ -5,6 +5,7 @@ import httpx
 import json
 from pyyoutube import Client
 import re
+import socket
 from util import run_sync_in_async
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -114,25 +115,29 @@ async def get_video_subtitles_official(video_id):
 
 
 # Janky Extraction
-
-
 async def get_video_subtitles(video_id):
-    try:
-        transcript = await run_sync_in_async(
-            YouTubeTranscriptApi.get_transcript,
-            video_id,
-            proxies=["http://138.68.60.8:8080"],
-        )
-        return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
-    except Exception as e:
-        try:
-            return await get_video_generated_subtitles(video_id)
-        except Exception as e:
-            raise Exception(f"Failed to get video subtitles")
+    if config.youtube_network_device:
+        socket_options = [
+            (
+                socket.SOL_SOCKET,
+                socket.SO_BINDTODEVICE,
+                config.youtube_network_device.encode(),
+            )
+        ]
+        transport = httpx.AsyncHTTPTransport(socket_options=socket_options)
+    else:
+        transport = None
+
+    return await get_video_generated_subtitles(video_id, transport=transport)
 
 
-async def get_video_generated_subtitles(video_id):
-    async with httpx.AsyncClient() as client:
+async def get_video_page_subtitles(video_id):
+    transcript = await run_sync_in_async(YouTubeTranscriptApi.get_transcript, video_id)
+    return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
+
+
+async def get_video_generated_subtitles(video_id, transport=None):
+    async with httpx.AsyncClient(transport=transport) as client:
         response = await client.get(f"https://www.youtube.com/watch?v={video_id}")
         html_content = response.text
         # TODO: Add support for other languages
