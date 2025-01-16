@@ -1,9 +1,9 @@
+from config import config
 from httpx import AsyncClient
 import json
 from os import environ
 
 TIMEOUT_SECONDS = 45
-API_KEY = environ.get("ANTHROPIC_API_KEY")
 
 
 class ClaudeError(Exception):
@@ -57,7 +57,7 @@ async def claude_request_json(
         response = await client.post(
             "https://api.anthropic.com/v1/messages",
             headers={
-                "x-api-key": API_KEY,
+                "x-api-key": config.anthropic_api_key,
                 "Content-Type": "application/json",
                 "anthropic-version": "2023-06-01",
                 "anthropic-beta": "prompt-caching-2024-07-31",

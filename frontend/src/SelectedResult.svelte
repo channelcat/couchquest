@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import type { SelectedResultType } from "./ResultSelector.svelte";
   import Button from "./components/form/Button.svelte";
+  import ResultMedia from "./ResultMedia.svelte";
   export let selected: SelectedResultType;
   const dispatch = createEventDispatcher();
 </script>
@@ -31,11 +32,5 @@
       {selected.result.release_year}
     </div>
   </div>
-  {#if selected.result.image_url}
-    <img
-      class="mx-auto max-h-48 max-w-96"
-      src={selected.result.image_url}
-      alt={selected.result.title}
-    />
-  {/if}
+  <ResultMedia result={selected.result} />
 </div>

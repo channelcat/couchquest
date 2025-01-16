@@ -23,6 +23,8 @@ services:
     image: redis:alpine
     ports:
       - 6379
+
+  # Scripts
   setup:
     build: .
     volumes:
@@ -31,5 +33,21 @@ services:
     profiles:
       - donotstart
     command: bash -c "cd /frontend && npm i"
-  # env_file:
-  #   - .env
+  config:
+    env_file: .env
+    build: backend
+    volumes:
+      - ./backend:/api
+    profiles:
+      - donotstart
+    entrypoint: python -m configuretron --yaml /api/config.yml --private-key-b64=$CONFIG_PRIVATE_KEY
+    command: --help
+  shell:
+    env_file: .env
+    build: backend
+    volumes:
+      - ./backend:/api
+    profiles:
+      - donotstart
+    working_dir: /api
+    command: python

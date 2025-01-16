@@ -11,6 +11,7 @@
   import { type Episode, type SearchResult, type Season } from "./backend";
   import Button from "./components/form/Button.svelte";
   import Select from "./components/form/Select.svelte";
+  import ResultMedia from "./ResultMedia.svelte";
 
   export let results: SearchResult[];
 
@@ -29,15 +30,9 @@
           {result.release_year}
         </div>
       </div>
-      {#if result.image_url}
-        <img
-          class="mx-auto max-h-48 max-w-96"
-          src={result.image_url}
-          alt={result.title}
-        />
-      {/if}
+      <ResultMedia {result} />
       <div class="flex my-4 space-x-2 items-center justify-center">
-        {#if result.seasons.length}
+        {#if result.seasons?.length}
           <Select
             options={[
               [undefined, "Select Season"],

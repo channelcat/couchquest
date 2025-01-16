@@ -12,6 +12,7 @@ import logging
 import myapifilms
 import opensubtitles
 from service import api, UserError
+import youtube
 
 NEWLINE = "\n"
 
@@ -34,8 +35,12 @@ async def none():
 
 @api.get("/search")
 async def media_search(query: str) -> list[SearchResult]:
-    # TODO: support multiple languages
-    results = [*await opensubtitles.search(query, filter_language="en")]
+    youtube_id = youtube.extract_video_id(query)
+    if youtube_id:
+        results = await youtube.search_video(youtube_id)
+    else:
+        # TODO: support multiple languages
+        results = await opensubtitles.search(query, filter_language="en")
 
     return results
 
@@ -44,19 +49,40 @@ async def media_search(query: str) -> list[SearchResult]:
 async def generate(request: GenerateRequest) -> GeneratedGames:
     # TODO: support multiple languages
 
-    # Fetch subtitles, synopses
-    subtitles, summary, parent_summary = await asyncio.gather(
-        opensubtitles.download_best_subtitles(request.id, language="en"),
-        myapifilms.get_imdb_summary(request.imdb_id),
-        (
-            myapifilms.get_imdb_summary(request.parent_imdb_id)
-            if request.parent_imdb_id
-            else none()
-        ),
-    )
+    prompt_resources = []
 
-    is_show = bool(request.parent_imdb_id)
-    feature_type = "episode of a show" if is_show else "movie"
+    if request.service == "youtube":
+        (title, channel, description), subtitles = await asyncio.gather(
+            youtube.get_video_details(request.id),
+            youtube.get_video_subtitles(request.id),
+        )
+        prompt_resources.append(f"<title>{title}</title>")
+        prompt_resources.append(f"<channel>{channel}</channel>")
+        prompt_resources.append(f"<description>{description}</description>")
+        prompt_resources.append(f"<transcript>{subtitles}</transcript>")
+        feature_type = "youtube video"
+
+    elif request.service == "opensubtitles":
+        # Fetch subtitles, synopses
+        subtitles, summary, parent_summary = await asyncio.gather(
+            opensubtitles.download_best_subtitles(request.id, language="en"),
+            myapifilms.get_imdb_summary(request.imdb_id),
+            (
+                myapifilms.get_imdb_summary(request.parent_imdb_id)
+                if request.parent_imdb_id
+                else none()
+            ),
+        )
+
+        is_show = bool(request.parent_imdb_id)
+        feature_type = "episode of a show" if is_show else "movie"
+
+        if is_show:
+            prompt_resources.append(f"<show summary>{parent_summary}</show summary>")
+            prompt_resources.append(f"<episode summary>{summary}</episode summary>")
+        else:
+            prompt_resources.append(f"<summary>{summary}</summary>")
+        prompt_resources.append(f"<transcript>{subtitles}</transcript>")
 
     # Assemble action prompts
     action_prompts = []
@@ -107,17 +133,7 @@ async def generate(request: GenerateRequest) -> GeneratedGames:
     logging.debug(f"Prompting claude: {prompt}")
     claude_response = await anthropic.claude_request_json(
         messages=[
-            *(
-                [
-                    f"<show summary>{parent_summary}</show summary>",
-                    f"<episode summary>{summary}</episode summary>",
-                ]
-                if is_show
-                else [
-                    f"<summary>{summary}</summary>",
-                ]
-            ),
-            f"<transcript>{subtitles}</transcript>",
+            *prompt_resources,
             prompt,
         ]
     )

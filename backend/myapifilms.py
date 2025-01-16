@@ -1,15 +1,15 @@
+from config import config
 from httpx import AsyncClient, Response
 from os import environ
 import logging
 
 
-TOKEN = environ.get("MY_API_FILMS_TOKEN")
 BASE_URL = "https://www.myapifilms.com"
 
 
 async def request(method, uri, **kwargs):
     # TODO: support multiple languages
-    params = {"token": TOKEN, "format": "json", "language": "en-us"}
+    params = {"token": config.my_api_films_token, "format": "json", "language": "en-us"}
     if kwargs.get("params"):
         params.update(kwargs["params"])
         del kwargs["params"]

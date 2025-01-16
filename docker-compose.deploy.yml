@@ -2,11 +2,8 @@ services:
   drinkarr:
     image: ghcr.io/channelcat/drinkarr:latest
     environment:
-      - ANTHROPIC_API_KEY
-      - MY_API_FILMS_TOKEN
-      - OPENSUBTITLES_API_KEY
-      - OPENSUBTITLES_USERNAME
-      - OPENSUBTITLES_PASSWORD
+      - ENV=production
+      - CONFIG_PRIVATE_KEY
     ports:
       - 80
     labels:

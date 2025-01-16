@@ -37,9 +37,5 @@ jobs:
         run: docker compose -f docker-compose.deploy.yml pull
       - name: 'Deploy compose'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          MY_API_FILMS_TOKEN: ${{ secrets.MY_API_FILMS_TOKEN }}
-          OPENSUBTITLES_API_KEY: ${{ secrets.OPENSUBTITLES_API_KEY }}
-          OPENSUBTITLES_USERNAME: ${{ secrets.OPENSUBTITLES_USERNAME }}
-          OPENSUBTITLES_PASSWORD: ${{ secrets.OPENSUBTITLES_PASSWORD }}
+          CONFIG_PRIVATE_KEY: ${{ secrets.CONFIG_PRIVATE_KEY }}
         run: docker compose -f docker-compose.deploy.yml up -d

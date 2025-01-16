@@ -73,10 +73,14 @@
 <section class="flex flex-col p-4 items-center justify-center h-full w-full">
   {#if !selected}
     <form
-      class="flex space-x-2 justify-center"
+      class="flex space-x-2 justify-center px-4 w-full"
       on:submit|preventDefault={search}
     >
-      <Input bind:value={query} placeholder="Search for a movie or TV show" />
+      <Input
+        fill
+        bind:value={query}
+        placeholder="Search for a movie or TV show"
+      />
       <Button loading={searching}>Search</Button>
     </form>
   {/if}

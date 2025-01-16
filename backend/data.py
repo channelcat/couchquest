@@ -20,11 +20,11 @@ class SearchResult(BaseModel):
     release_year: int | None
     service: str
     id: str | int
-    imdb_id: int | str | None
+    imdb_id: int | None
     image_url: str
     url: str
-    type: Literal["movie", "series"]
-    seasons: list[Season]
+    type: Literal["movie", "series", "video"]
+    seasons: list[Season] | None = None
     release_date: date | None = None
 
 
@@ -41,7 +41,7 @@ class ActionRequest(BaseModel):
 class GenerateRequest(BaseModel):
     id: str | int
     service: str
-    imdb_id: int
+    imdb_id: int | None
     desired_actions: list[ActionRequest]
     parent_imdb_id: int | None = None
 

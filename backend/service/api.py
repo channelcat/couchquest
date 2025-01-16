@@ -14,7 +14,7 @@ from .exceptions import bind_exceptions
 logging.basicConfig(level=logging.INFO)
 
 # Strip development options
-IS_PRODUCTION_MODE = environ.get("MODE") == "production"
+IS_PRODUCTION_MODE = environ.get("ENV") == "production"
 
 
 def lifespan(app: FastAPI):

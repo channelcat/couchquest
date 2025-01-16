@@ -1,12 +1,10 @@
+from config import config
 from httpx import AsyncClient, Response
 from json.decoder import JSONDecodeError
 from os import environ
 import logging
 from data import Episode, Season, SearchResult
 
-USERNAME = environ.get("OPENSUBTITLES_USERNAME")
-PASSWORD = environ.get("OPENSUBTITLES_PASSWORD")
-API_KEY = environ.get("OPENSUBTITLES_API_KEY")
 TOKEN = None
 BASE_URL = "https://api.opensubtitles.com/api/v1"
 
@@ -14,7 +12,7 @@ BASE_URL = "https://api.opensubtitles.com/api/v1"
 async def request(method, uri, use_token=True, **kwargs):
     headers = {
         "User-Agent": "httpx",
-        "Api-Key": API_KEY,
+        "Api-Key": config.opensubtitles_api_key,
         "Content-Type": "application/json",
     }
     if use_token:
@@ -63,7 +61,10 @@ async def get_token():
             "POST",
             "/login",
             use_token=False,
-            json={"username": USERNAME, "password": PASSWORD},
+            json={
+                "username": config.opensubtitles_username,
+                "password": config.opensubtitles_password,
+            },
             follow_redirects=False,
         )
         TOKEN = response["token"]
