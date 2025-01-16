@@ -30,7 +30,11 @@
         </div>
       </div>
       {#if result.image_url}
-        <img class="mx-auto" src={result.image_url} alt={result.title} />
+        <img
+          class="mx-auto max-h-48 max-w-96"
+          src={result.image_url}
+          alt={result.title}
+        />
       {/if}
       <div class="flex my-4 space-x-2 items-center justify-center">
         {#if result.seasons.length}

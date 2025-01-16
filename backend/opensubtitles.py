@@ -1,4 +1,5 @@
 from httpx import AsyncClient, Response
+from json.decoder import JSONDecodeError
 from os import environ
 import logging
 from data import Episode, Season, SearchResult
@@ -23,12 +24,19 @@ async def request(method, uri, use_token=True, **kwargs):
         del kwargs["headers"]
     if "timeout" not in kwargs:
         kwargs["timeout"] = 30
+    if "follow_redirects" not in kwargs:
+        kwargs["follow_redirects"] = True
 
     async with AsyncClient() as client:
         response: Response = await getattr(client, method.lower())(
             f"{BASE_URL}{uri}", headers=headers, **kwargs
         )
-        result = response.json()
+        try:
+            result = response.json()
+        except JSONDecodeError:
+            raise LookupError(
+                f"OpenSubtitles error: {uri} - {response.status_code} - {response.text}"
+            )
 
         # Request Error
         if not 200 <= response.status_code < 300:
@@ -70,7 +78,9 @@ def parse_image_url(url: str) -> str:
 
 
 async def search(query: str, filter_language: str = None) -> list[dict]:
-    response = await request("GET", f"/features", params={"query": query})
+    response = await request(
+        "GET", f"/features", params={"query": query}, use_token=False
+    )
 
     results = [
         result["attributes"]

@@ -33,7 +33,7 @@
   </div>
   {#if selected.result.image_url}
     <img
-      class="mx-auto"
+      class="mx-auto max-h-48 max-w-96"
       src={selected.result.image_url}
       alt={selected.result.title}
     />
