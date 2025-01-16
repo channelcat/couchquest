@@ -94,10 +94,34 @@ async def get_video_details(video_id):
     )
 
 
+# API-based (requires OAuth2)
+
+
+async def get_video_subtitles_official(video_id):
+    client = get_client()
+    captions = await run_sync_in_async(client.captions.list, video_id=video_id)
+    if type(captions) is dict:
+        raise Exception(f"Error fetching captions for {video_id}: {captions}")
+
+    caption_id = None
+    for caption in captions.items:
+        if caption.snippet.language == "en":
+            caption_id = caption.id
+            break
+    else:
+        raise Exception(f"No captions found for {video_id}")
+    return await run_sync_in_async(client.captions.download, caption_id=caption_id)
+
+
+# Janky Extraction
+
+
 async def get_video_subtitles(video_id):
     try:
         transcript = await run_sync_in_async(
-            YouTubeTranscriptApi.get_transcript, video_id
+            YouTubeTranscriptApi.get_transcript,
+            video_id,
+            proxies=["http://138.68.60.8:8080"],
         )
         return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
     except Exception as e:
