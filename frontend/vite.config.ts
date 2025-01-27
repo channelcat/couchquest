@@ -20,7 +20,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
   },
-  base: "https://drinkarr.hill.tools/static",
+  base: "https://couchquest.app/static",
   css: { postcss },
   plugins: [svelte(),],
 })

@@ -24,7 +24,7 @@ RUN npm install
 COPY --from=backend /tmp/openapi.json /tmp/openapi.json
 
 RUN npx @hey-api/openapi-ts \
-    --base https://drinkarr.hill.tools \
+    --base https://couchquest.app \
     --input /tmp/openapi.json \
     --output /app/src/backend \
     --client legacy/fetch

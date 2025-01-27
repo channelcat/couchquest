@@ -44,7 +44,7 @@ api.service = CORSMiddleware(
     app=api,
     allow_origins=[
         "http://localhost:3000",
-        "https://drinkarr.hill.tools",
+        "https://couchquest.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],

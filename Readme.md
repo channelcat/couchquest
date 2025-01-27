@@ -9,4 +9,4 @@ Makes drinking games using subtitles + AI.
 
 # How to update live
  * commit+push to main branch
- * Navigate to https://drinkarr.hill.tools
+ * Navigate to https://couchquest.app
