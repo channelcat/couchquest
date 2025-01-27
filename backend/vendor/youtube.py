@@ -1,5 +1,5 @@
 from config import config
-from data import SearchResult
+from api.data import SearchResult
 from datetime import datetime
 import httpx
 import json

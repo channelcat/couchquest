@@ -12,7 +12,7 @@
 {/if}
 
 {#if loading}
-  <div class="fixed inset-0">
+  <div class="fixed inset-0 z-10">
     <div transition:fade={{ duration: 300 }}>
       <div class="bg-white bg-opacity-80 absolute inset-0 z-30"></div>
       <div

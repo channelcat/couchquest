@@ -3,7 +3,7 @@ from httpx import AsyncClient, Response
 from json.decoder import JSONDecodeError
 from os import environ
 import logging
-from data import Episode, Season, SearchResult
+from api.data import Episode, Season, SearchResult
 
 TOKEN = None
 BASE_URL = "https://api.opensubtitles.com/api/v1"

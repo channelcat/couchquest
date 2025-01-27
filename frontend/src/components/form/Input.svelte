@@ -35,7 +35,7 @@
   }
 </script>
 
-<div class="flex flex-grow" class:space-x-3={type === "range"}>
+<div class="flex" class:grow={fill} class:space-x-3={type === "range"}>
   {#if type === "range"}
     <output class="block text-center w-100 font-bold text-xl whitespace-nowrap">
       {value || "Use Slider"}{#if showPercent}%{/if}
@@ -111,7 +111,7 @@
       on:input
       {min}
       {max}
-      class="block appearance-none rounded-none border border-gray-300 px-3 py-2 placeholder-gray-500 sm:text-sm"
+      class="block h-10 appearance-none rounded-none border border-gray-300 px-3 py-2 placeholder-gray-500 sm:text-sm"
     />
   {/if}
 </div>

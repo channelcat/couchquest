@@ -3,16 +3,17 @@
   import type { SelectedResultType } from "./ResultSelector.svelte";
   import Button from "./components/form/Button.svelte";
   import ResultMedia from "./ResultMedia.svelte";
+  import Card from "./components/Card.svelte";
   export let selected: SelectedResultType;
   const dispatch = createEventDispatcher();
 </script>
 
-<div class="border p-4 my-4 rounded mb-6 shadow-md w-3/4">
-  <div class="flex justify-between items-center mb-4">
+<Card>
+  <div class="flex justify-between mb-4">
     <div class="w-8">
-      <Button on:click={() => dispatch("deselect")} size="sm" style="danger"
-        >X</Button
-      >
+      <Button on:click={() => dispatch("deselect")} size="sm" style="danger">
+        X
+      </Button>
     </div>
     <div class="flex flex-col space-y-2">
       <h3 class="text-lg">{selected.result.title}</h3>
@@ -33,4 +34,4 @@
     </div>
   </div>
   <ResultMedia result={selected.result} />
-</div>
+</Card>

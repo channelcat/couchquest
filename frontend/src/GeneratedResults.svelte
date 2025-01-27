@@ -1,16 +1,17 @@
 <script lang="ts">
   import type { GeneratedGames } from "./backend";
+  import Card from "./components/Card.svelte";
   import Tab from "./components/Tab.svelte";
   import TabGroup from "./components/TabGroup.svelte";
 
   export let results: GeneratedGames;
 </script>
 
-<h3 class="my-4 text-sm text-gray-600 w-3/4 mx-auto mb-8">
-  {results.explanation}
-</h3>
+<Card>
+  <h3 class="mb-4 text-sm text-gray-600 mb-8">
+    {results.explanation}
+  </h3>
 
-<div class="w-3/4 mx-auto">
   <TabGroup id="games" history={false} save={false} style="card">
     {#each results.actions as action}
       <Tab name={action.action}>
@@ -52,4 +53,4 @@
       </Tab>
     {/if}
   </TabGroup>
-</div>
+</Card>

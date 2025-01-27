@@ -1,23 +1,25 @@
 <script lang="ts">
   import {
     mediaSearch,
-    generate as generateRequest,
+    gameGenerate as generateRequest,
     type SearchResult as SearchResultType,
     type GeneratedGames,
   } from "./backend";
 
+  import Logo from "./assets/couchquest-large.png";
   import Alert from "./components/Alert.svelte";
   import Button from "./components/form/Button.svelte";
   import Input from "./components/form/Input.svelte";
   import Loading from "./components/Loading.svelte";
   import Toast from "./components/Toast.svelte";
   import GeneratedResults from "./GeneratedResults.svelte";
-  import Generator from "./Generator.svelte";
+  import Generator from "./GeneratorForm.svelte";
   import ResultSelector, {
     type SelectedResultType,
   } from "./ResultSelector.svelte";
   import SelectedResult from "./SelectedResult.svelte";
   import { apiCall } from "./shared/backend";
+  import { shrinkY } from "./shared/transitions";
 
   let query = "";
   let generating = false;
@@ -69,36 +71,43 @@
 
 <Alert />
 <Toast />
+<Loading loading={generating || searching} />
 
 <section class="flex flex-col p-4 items-center justify-center h-full w-full">
+  <img
+    src={Logo}
+    alt="Logo"
+    class="h-[min(20vh,20vw)] w-[min(20vh,20vw)] mb-6"
+  />
   {#if !selected}
     <form
-      class="flex space-x-2 justify-center px-4 w-full"
+      class="flex justify-center w-full max-w-96 shadow-lg rounded-lg mb-10"
       on:submit|preventDefault={search}
     >
       <Input
         fill
         bind:value={query}
         placeholder="Search for a movie or TV show"
+        left
       />
-      <Button loading={searching}>Search</Button>
+      <Button loading={searching} right>Search</Button>
     </form>
   {/if}
 
   {#if selected}
-    <SelectedResult {selected} on:deselect={() => (selected = null)} />
-    {#if generating || generatedResults}
-      <Loading loading={generating}>
+    <div transition:shrinkY>
+      <SelectedResult {selected} on:deselect={() => (selected = null)} />
+      {#if generatedResults}
         <GeneratedResults results={generatedResults} />
-      </Loading>
-    {:else}
-      <Generator on:generate={generate} />
-    {/if}
-  {:else}
-    <Loading loading={searching}>
-      {#if searchResults}
-        <ResultSelector on:select={selectResult} results={searchResults} />
+      {:else}
+        <div transition:shrinkY>
+          <Generator on:generate={generate} />
+        </div>
       {/if}
-    </Loading>
+    </div>
+  {:else if searchResults}
+    <div transition:shrinkY>
+      <ResultSelector on:select={selectResult} results={searchResults} />
+    </div>
   {/if}
 </section>

@@ -9,3 +9,16 @@
     min-height: 100%;
     flex-grow: 1;
 }
+
+html {
+    background: repeating-linear-gradient(45deg,
+            #606dbc,
+            #606dbc 10px,
+            #465298 10px,
+            #465298 20px);
+    background: repeating-linear-gradient(45deg,
+            #aad9d0,
+            #aad9d0 10px,
+            #bae3dc 10px,
+            #bae3dc 20px);
+}

@@ -12,6 +12,7 @@
   import Button from "./components/form/Button.svelte";
   import Select from "./components/form/Select.svelte";
   import ResultMedia from "./ResultMedia.svelte";
+  import Card from "./components/Card.svelte";
 
   export let results: SearchResult[];
 
@@ -22,7 +23,7 @@
 
 {#if results.length}
   {#each results as result}
-    <div class="border p-4 my-4 rounded mb-6 shadow-md w-3/4">
+    <Card>
       <div class="flex justify-between items-center mb-4">
         <div class="w-4"></div>
         <h3 class="text-lg">{result.title}</h3>
@@ -74,7 +75,7 @@
           Select
         </Button>
       </div>
-    </div>
+    </Card>
   {/each}
 {:else}
   <div class="flex justify-center items-center mt-4">
