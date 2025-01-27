@@ -12,12 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: 'Build base'
-        run: docker build -t ghcr.io/channelcat/drinkarr:latest .
+        run: docker build -t ghcr.io/channelcat/couchquest:latest .
         # GITHUB_TOKEN is built-in
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: 'Push to GHCR'
-        run: docker push ghcr.io/channelcat/drinkarr:latest
+        run: docker push ghcr.io/channelcat/couchquest:latest
   deploy:
     runs-on: ubuntu-latest
     needs: build

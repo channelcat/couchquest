@@ -1,22 +1,22 @@
 services:
-  drinkarr:
-    image: ghcr.io/channelcat/drinkarr:latest
-    environment:
-      - ENV=production
-      - CONFIG_PRIVATE_KEY
-    ports:
-      - 80
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.drinkarr.rule=Host(`couchquest.app`)
-      - traefik.http.routers.drinkarr.entrypoints=web,websecure
-      - traefik.http.routers.drinkarr.tls.certresolver=letsencrypt
-    networks:
-      - webserver_web
-  cache:
-    image: redis:alpine
-    ports:
-      - 6379
+    couchquest:
+        image: ghcr.io/channelcat/couchquest:latest
+        environment:
+            - ENV=production
+            - CONFIG_PRIVATE_KEY
+        ports:
+            - 80
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.couchquest.rule=Host(`couchquest.app`)
+            - traefik.http.routers.couchquest.entrypoints=web,websecure
+            - traefik.http.routers.couchquest.tls.certresolver=letsencrypt
+        networks:
+            - webserver_web
+    cache:
+        image: redis:alpine
+        ports:
+            - 6379
 networks:
-  webserver_web:
-    external: true
+    webserver_web:
+        external: true

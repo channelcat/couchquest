@@ -7,6 +7,7 @@
   } from "./backend";
 
   import Logo from "./assets/couchquest-large.png";
+  import Icon from "./assets/couchquest-icon.png";
   import Alert from "./components/Alert.svelte";
   import Button from "./components/form/Button.svelte";
   import Input from "./components/form/Input.svelte";
@@ -68,6 +69,10 @@
     generatedResults = null;
   }
 </script>
+
+<svelte:head>
+  <link rel="icon" type="image/x-icon" href={Icon} />
+</svelte:head>
 
 <Alert />
 <Toast />
