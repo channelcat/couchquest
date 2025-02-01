@@ -31,3 +31,5 @@ services:
 networks:
   webserver_web:
     external: true
+  couchquest:
+    external: false
