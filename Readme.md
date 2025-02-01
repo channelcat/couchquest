@@ -1,4 +1,4 @@
-Drinkarr App
+Couch Quest App
 ===
 
 Makes drinking games using subtitles + AI.

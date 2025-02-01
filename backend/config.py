@@ -7,11 +7,18 @@ from os import environ
 class Config:
     anthropic_api_key: str
     my_api_films_token: str
+    database_user: str
+    database_password: str
+    database_name: str
+    database_host: str
+    google_client_id: str
+    google_client_secret: str
+    google_redirect_uri: str
     opensubtitles_api_key: str
     opensubtitles_username: str
     opensubtitles_password: str
     youtube_api_key: str
-    youtube_network_device: str | None
+    youtube_proxy: str
 
 
 use_encryption = environ.get("CONFIG_PRIVATE_KEY", "") != ""

@@ -1,22 +1,33 @@
 services:
-    couchquest:
-        image: ghcr.io/channelcat/couchquest:latest
-        environment:
-            - ENV=production
-            - CONFIG_PRIVATE_KEY
-        ports:
-            - 80
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.couchquest.rule=Host(`couchquest.app`)
-            - traefik.http.routers.couchquest.entrypoints=web,websecure
-            - traefik.http.routers.couchquest.tls.certresolver=letsencrypt
-        networks:
-            - webserver_web
-    cache:
-        image: redis:alpine
-        ports:
-            - 6379
+  couchquest:
+    image: ghcr.io/channelcat/couchquest:latest
+    environment:
+      - ENV=production
+      - CONFIG_PRIVATE_KEY
+    ports:
+      - 80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.couchquest.rule=Host(`couchquest.app`)
+      - traefik.http.routers.couchquest.entrypoints=web,websecure
+      - traefik.http.routers.couchquest.tls.certresolver=letsencrypt
+    networks:
+      - webserver_web
+      - couchquest
+  cache:
+    image: redis:alpine
+    ports:
+      - 6379
+    networks:
+      - couchquest
+  proxy:
+    image: ginuerzh/gost
+    ports:
+      - 8888
+    command: -L=http://:8888 -F=socks5://wwM5ztXRcgX7eDqdCerKzAou:UrmZDB3TZEfJPPVZB9ceTaZN@los-angeles.us.socks.nordhold.net:1080
+    networks:
+      - couchquest
+
 networks:
-    webserver_web:
-        external: true
+  webserver_web:
+    external: true

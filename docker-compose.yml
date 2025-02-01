@@ -23,6 +23,38 @@ services:
     image: redis:alpine
     ports:
       - 6379
+  db:
+    image: postgres:17.2
+    environment:
+      POSTGRES_USER: couchquest_user
+      POSTGRES_PASSWORD: 7eleven-was-a-part-time-job
+      POSTGRES_DB: couchquest
+    ports:
+      - 5432
+    volumes:
+      - /var/lib/postgresql/data
+  proxy:
+    image: ginuerzh/gost
+    ports:
+      - 8888:8888
+    command: -L=http://:8888 -F=socks5://wwM5ztXRcgX7eDqdCerKzAou:UrmZDB3TZEfJPPVZB9ceTaZN@los-angeles.us.socks.nordhold.net:1080
+
+  # proxy:
+  #   build:
+  #     context: ./proxy-wireguard
+  #   environment:
+  #     PEERS: false
+  #     PUID: 1000
+  #     PGID: 1000
+  #   cap_add:
+  #     - NET_ADMIN
+  #   ports:
+  #     - 8888:8888
+  #   volumes:
+  #     - /lib/modules:/lib/modules
+  #   sysctls:
+  #     - net.ipv4.conf.all.src_valid_mark=1
+  #   stop_grace_period: 1s
 
   # Scripts
   setup:
@@ -51,3 +83,15 @@ services:
       - donotstart
     working_dir: /api
     command: python
+  init-db:
+    build: backend
+    command: python /api/scripts/init_db.py
+    profiles:
+      - donotstart
+    volumes:
+      - ./backend:/api
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-app}
+    depends_on:
+      db:
+        condition: service_healthy

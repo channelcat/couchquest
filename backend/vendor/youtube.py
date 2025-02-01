@@ -95,7 +95,17 @@ async def get_video_details(video_id):
     )
 
 
-# API-based (requires OAuth2)
+# Janky Extraction
+async def get_video_subtitles(video_id):
+    transcript = await run_sync_in_async(
+        YouTubeTranscriptApi.get_transcript,
+        video_id,
+        proxies={"https": config.youtube_proxy, "http": config.youtube_proxy},
+    )
+    return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
+
+
+# -------------------- Official Extraction --------------------
 
 
 async def get_video_subtitles_official(video_id):
@@ -114,26 +124,7 @@ async def get_video_subtitles_official(video_id):
     return await run_sync_in_async(client.captions.download, caption_id=caption_id)
 
 
-# Janky Extraction
-async def get_video_subtitles(video_id):
-    if config.youtube_network_device:
-        socket_options = [
-            (
-                socket.SOL_SOCKET,
-                socket.SO_BINDTODEVICE,
-                config.youtube_network_device.encode(),
-            )
-        ]
-        transport = httpx.AsyncHTTPTransport(socket_options=socket_options)
-    else:
-        transport = None
-
-    return await get_video_generated_subtitles(video_id, transport=transport)
-
-
-async def get_video_page_subtitles(video_id):
-    transcript = await run_sync_in_async(YouTubeTranscriptApi.get_transcript, video_id)
-    return "\n\n".join(f"[{t['start']}s] {t['text']}" for t in transcript)
+# -------------------- Custom Extraction --------------------
 
 
 async def get_video_generated_subtitles(video_id, transport=None):

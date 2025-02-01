@@ -15,12 +15,13 @@ logging.basicConfig(level=logging.INFO)
 
 # Strip development options
 IS_PRODUCTION_MODE = environ.get("ENV") == "production"
+LOCAL_HOST = environ.get("LOCAL_HOST", "localhost")
 
 
 def lifespan(app: FastAPI):
     logging.info("Generating OpenAPI schema...")
     generate_openapi_schema(app)
-    generate_openapi_code(host="http://localhost:4000", diff_files=True)
+    generate_openapi_code(host=f"http://{LOCAL_HOST}:4000", diff_files=True)
 
     yield
 
@@ -43,7 +44,8 @@ api = FastAPI(
 api.service = CORSMiddleware(
     app=api,
     allow_origins=[
-        "http://localhost:3000",
+        f"http://localhost:3000",
+        f"http://{LOCAL_HOST}:3000",
         "https://couchquest.app",
     ],
     allow_credentials=True,
