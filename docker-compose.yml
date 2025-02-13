@@ -5,6 +5,7 @@ services:
     volumes:
       - ./backend:/api
       - ./frontend:/frontend
+    user: 1000:1000
     ports:
       - 4000:4000
     command: uvicorn main:api.service --host 0.0.0.0 --port 4000 --reload
@@ -77,21 +78,10 @@ services:
   shell:
     env_file: .env
     build: backend
+    user: 1000:1000
     volumes:
       - ./backend:/api
     profiles:
       - donotstart
     working_dir: /api
     command: python
-  init-db:
-    build: backend
-    command: python /api/scripts/init_db.py
-    profiles:
-      - donotstart
-    volumes:
-      - ./backend:/api
-    environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-app}
-    depends_on:
-      db:
-        condition: service_healthy

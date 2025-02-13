@@ -4,7 +4,7 @@ import { showError, showNotice } from "../components/Alert.svelte";
 
 export async function apiCall<A, R>(
   call: (data: A) => Promise<R>,
-  data: A,
+  data: A = undefined,
   options: { handleError?: boolean } = { handleError: true },
 ): Promise<[R | null, string | null]> {
   let result = null;

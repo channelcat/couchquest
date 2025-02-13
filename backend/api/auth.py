@@ -1,62 +1,81 @@
 from config import config
-from fastapi import APIRouter
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2AuthorizationCodeBearer
-from google.oauth2 import id_token
-from google.auth.transport import requests
-import os
+from fastapi import APIRouter, Request, Response
+from models.user import User, ExternalAccount
+from pydantic import BaseModel
+from service.exceptions import UserError
+from .session import create_session
+from .social_providers.openid import OpenID
+from .social_providers.google import user_from_google
+from .user import user_me
 
 router = APIRouter()
 
-# OAuth2 configuration for Google
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl="https://accounts.google.com/o/oauth2/v2/auth",
-    tokenUrl="https://oauth2.googleapis.com/token"
-)
 
-GOOGLE_CLIENT_ID = config.google_client_id
-GOOGLE_CLIENT_SECRET = config.google_client_secret
+class GoogleSSO(BaseModel):
+    token: str
 
-@router.post("/google")
-async def google_auth(token: str = Depends(oauth2_scheme)):
-    try:
-        # Verify the token with Google
-        idinfo = id_token.verify_oauth2_token(
-            token, 
-            requests.Request(),
-            GOOGLE_CLIENT_ID
+
+class Providers(BaseModel):
+    class Provider(BaseModel):
+        client_id: str
+
+    google: Provider
+
+
+@router.get("/providers")
+async def get_providers() -> Providers:
+    return Providers(google=Providers.Provider(client_id=config.google_client_id))
+
+
+@router.post("/google/callback")
+async def google_oauth_callback(data: GoogleSSO, response: Response):
+    user = await user_from_google(config.google_client_id, data.token, allowed_drift=10)
+    return await login_user(user, response)
+
+
+async def login_user(
+    social_user: OpenID,
+    response: Response,
+):
+    # Create External Account
+    external_account, created = await ExternalAccount.get_or_create(
+        external_id=social_user.id,
+        provider=social_user.provider,
+        defaults={
+            "email": social_user.email,
+            "name": social_user.display_name,
+            "picture": social_user.picture,
+        },
+    )
+
+    # Update External Account
+    if (
+        external_account.email != social_user.email
+        or external_account.name != social_user.display_name
+        or external_account.picture != social_user.picture
+    ):
+        external_account.email = social_user.email
+        external_account.name = social_user.display_name
+        external_account.picture = social_user.picture
+        await external_account.save()
+
+    # Create User
+    if not external_account.user:
+        user, created = await User.get_or_create(
+            email=social_user.email,
+            defaults={
+                "name": social_user.display_name,
+                "picture": social_user.picture,
+            },
         )
+        if not created:
+            raise UserError("User already exists")
 
-        # Check if the token is issued by Google
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid issuer"
-            )
+        external_account.user = user
+        await external_account.save()
+    else:
+        user = await external_account.user
 
-        # Extract user information
-        user_info = {
-            "email": idinfo['email'],
-            "name": idinfo['name'],
-            "picture": idinfo.get('picture'),
-            "google_id": idinfo['sub']
-        }
+    await create_session(user, response)
 
-        return user_info
-
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
-        )
-
-@router.get("/google/url")
-async def get_google_auth_url():
-    return {
-        "url": f"https://accounts.google.com/o/oauth2/v2/auth?"
-        f"client_id={GOOGLE_CLIENT_ID}&"
-        "response_type=code&"
-        "scope=openid email profile&"
-        "access_type=offline&"
-        f"redirect_uri={config.google_redirect_uri}"
-    }
+    return await user_me(user)

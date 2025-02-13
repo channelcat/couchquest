@@ -11,9 +11,9 @@ class Config:
     database_password: str
     database_name: str
     database_host: str
+    jwt_secret: str
     google_client_id: str
     google_client_secret: str
-    google_redirect_uri: str
     opensubtitles_api_key: str
     opensubtitles_username: str
     opensubtitles_password: str

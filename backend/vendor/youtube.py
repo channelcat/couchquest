@@ -128,7 +128,7 @@ async def get_video_subtitles_official(video_id):
 
 
 async def get_video_generated_subtitles(video_id, transport=None):
-    async with httpx.AsyncClient(transport=transport) as client:
+    async with httpx.AsyncClient() as client:
         response = await client.get(f"https://www.youtube.com/watch?v={video_id}")
         html_content = response.text
         # TODO: Add support for other languages

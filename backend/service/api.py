@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -7,6 +8,7 @@ from .codegen import (
     generate_openapi_code,
     generate_openapi_schema,
 )
+from .lifespan import execute_lifespan, register_lifespan
 from .static import bind_static
 from .exceptions import bind_exceptions
 
@@ -18,7 +20,8 @@ IS_PRODUCTION_MODE = environ.get("ENV") == "production"
 LOCAL_HOST = environ.get("LOCAL_HOST", "localhost")
 
 
-def lifespan(app: FastAPI):
+@asynccontextmanager
+async def generate_openapi(app: FastAPI):
     logging.info("Generating OpenAPI schema...")
     generate_openapi_schema(app)
     generate_openapi_code(host=f"http://{LOCAL_HOST}:4000", diff_files=True)
@@ -34,8 +37,9 @@ if IS_PRODUCTION_MODE:
     }
 else:
     kwargs = {
-        "lifespan": lifespan,
+        "lifespan": execute_lifespan,
     }
+    register_lifespan(generate_openapi)
 
 api = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,

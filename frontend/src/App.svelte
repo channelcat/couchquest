@@ -21,6 +21,7 @@
   import SelectedResult from "./SelectedResult.svelte";
   import { apiCall } from "./shared/backend";
   import { shrinkY } from "./shared/transitions";
+  import LoginForm from "./components/LoginForm.svelte";
 
   let query = "";
   let generating = false;

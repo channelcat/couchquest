@@ -7,9 +7,15 @@ config:
     Y0RISjgvK0crcUlLRjlka1FCaWpJRmdnSDJsbWk5RXlmbk0xem41bVlNNkdhd2lCT2wxd2x4NlJI
     dlAwWVNkanZVelp5c2FzUFpYU0FmUFMrSTQ4Zkh4Yy9vZ1c2TmRtSFVqSVdFTEE2cFl3TWc1ZFFn
     PT0=
-  google_client_id: 100000000000000000000
-  google_client_secret: 100000000000000000000
-  google_redirect_uri: http://localhost:8000/auth/google/callback
+  google_client_id: 110572636785-6f5ji7jpmnhniang43alo143udke047v.apps.googleusercontent.com
+  google_client_secret.encrypted: !!binary |
+    ZlgzZ09QbDNMV2J0VUpGclVWMUhXOGhaeHNlOTdoZGFiR0JhVi9JMkZQM1p2VTlremZ3eGxoTFRl
+    T0ZWVEp5SVZXMGxXRVZwdUhGam5DRSt0T3ZhQjl1ai9hdEE2Yy9hcG5MRkU4V05BY3BVYXhmYWhL
+    S0NCNjNod001aHpyRVpWaWd1WEk2eEpiakRiWEk5eS9WbUxRaGJabHBnMnRzN3d5OFZlNTErQnpi
+    SUVNRmp5WjJ0a1VGRmlWbXU5Z0ZrT0s0ZCtKQUpwcDkvS0dQRDJwVnRSa056UndkZ2pwdDlxM1h6
+    QlZrMDVaWUZJUWhQTzcvOEFTejVsMnZGQi9ub25VVTBUR05aVnExc3ZMM1UybFA4QU9uWFQva3NB
+    M20vbVlsaFdkaE1LaGtlLy9XaFlNdjZ0cTg5QUR6dVlTVzNYOG14ckxWZGdid0pVRTNmZXZlM2hR
+    PT0=
   my_api_films_token.encrypted: !!binary |
     Wnl2aUV1bnRHN21TblVmY3NEZTlYWmJxMFdHWVc5enVmblBpZHFXRXM5NmRkUU8rVFplV3pmdVhP
     cGl2WTVOVVJnT3oyaTJETGRjemRtSjl0cG92Z1pJclM5L29Ja3gvdFNTUks4ZkRLNmd1K2wxV0Qr
@@ -47,15 +53,24 @@ config:
 encryption:
   key: LS0tLS1CRUdJTiBSU0EgUFVCTElDIEtFWS0tLS0tCk1JSUJDZ0tDQVFFQXBwaVQrZWdBV3hGalE0bHNTUlpoN1pjMW56cDlFakhQQjZRNzh6MFBkZ0Nzc1RvbkNneGoKb3lXakFXZ3NpSmd3NDhnWXo3OUxUWndlVngyQnVGVWhSS2hFcTRHcjJudWx3OXNiOEFDTkVHeU9vODdXdDdKRAphMFRQN3lzQU1PZ0p6OXdKT285bC91QmFGSXRyUXVYVzduS3RlcDV1dnJhdHlNdnNQd3VMdTFsbVlsUTBrdUEzCmV2QTYyTFVWcnRBelV6N3F2eHFqTGJuMjBiSDA5T0N5L0hqNDJ6MzJWQllIaWxDc0pEL0hydlNVeGZ5VTh2WWoKVmgwZUFBM01WdzhDR2E5cmh2RE9uc3I4bkgzT210L25KWncrc1JDWU1QR2FKS05TUzQ1U1BRZkhBdFBOWlZaWgp1VU9rbkxtK0gycXh4VFZZdWUxdE92aDNRdTdEWGk0cXBRSURBUUFCCi0tLS0tRU5EIFJTQSBQVUJMSUMgS0VZLS0tLS0K
 env:
-  production:
-    config:
-      database_host: db
-      database_name: couchquest
-      database_user: couchquest_user
-      database_password: 7eleven-was-a-part-time-job
   development:
     config:
       database_host: db
       database_name: couchquest
-      database_user: couchquest_user
       database_password: 7eleven-was-a-part-time-job
+      database_user: couchquest_user
+      jwt_secret: 7eleven-was-a-part-time-job
+  production:
+    config:
+      database_host: db
+      database_name: couchquest
+      database_password: 7eleven-was-a-part-time-job
+      database_user: couchquest_user
+      jwt_secret.encrypted: !!binary |
+        TUdVVklUQnhaSWdXY0xqK1NqZDVKdk1Jcjd0ZTFkOFNjamViUmtFamN4TnlVckIrRFp3MVdXemdm
+        a2RQcHc5amUzc1ovZ1VOZWNpRW5TLyt2cjRZUjJuSUF0M2I1c2x1amNKTDFjSDBBOW1RN3M0Uy9O
+        RC9LZmtwQTdDTloyc2RybW9GZGUya2MwZGlkd0dsUEtzbnZBYTMyVVhPQVQrOVVVUVF5YTZlaFd6
+        VHNya1krMjY4MXI0ODJMZnQzV3NXRXkzSjJaYlVZZkNMMEhkZTN0MG9QVDFoaXkraFh5Rll5UjZu
+        L1Y3UmVlc3UyRnpBRnVUWHhFUXFqWkNLL3piaTJBNUwzNm1zRGd5MVNuYVdDK2NxRGNkemNLZVNK
+        ZjFCWkVONW1DbENsOC81eWFTd2RkWGtDK05XR2U3cStwZGJEcXVLcFk4cnFYQUd0YWFnQm04QzFn
+        PT0=

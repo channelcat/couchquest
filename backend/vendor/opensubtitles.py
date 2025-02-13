@@ -166,9 +166,9 @@ async def download_best_subtitles(feature_id: int, language: str) -> bytes:
     sorted_results = sorted(
         response["data"],
         key=lambda s: (
-            s["attributes"]["hearing_impaired"],
-            s["attributes"]["from_trusted"],
-            s["attributes"]["download_count"],
+            s["attributes"]["hearing_impaired"] or False,
+            s["attributes"]["from_trusted"] or False,
+            s["attributes"]["download_count"] or 0,
         ),
         reverse=True,
     )

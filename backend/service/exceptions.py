@@ -4,9 +4,10 @@ from fastapi.requests import Request
 
 
 class UserError(Exception):
+    status_code: int
     code: str
 
-    def __init__(self, *args: object, code="bad_request") -> None:
+    def __init__(self, *args: object, status_code=400, code="bad_request") -> None:
         super().__init__(*args)
         self.code = code
 
@@ -19,7 +20,7 @@ def bind_exceptions(api: FastAPI):
     @api.exception_handler(UserError)
     async def user_error_handler(request: Request, exc: UserError):
         return JSONResponse(
-            status_code=400,
+            status_code=exc.status_code,
             content={"error": {"code": exc.code, "message": f"{exc}"}},
         )
 
