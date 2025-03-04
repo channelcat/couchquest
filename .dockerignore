@@ -1,6 +1,7 @@
 **/node_modules
 frontend/backend
 frontend/dist
+sqlite3.db
 
 # OS
 .DS_Store
